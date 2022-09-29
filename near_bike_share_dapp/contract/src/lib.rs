@@ -8,11 +8,12 @@ use near_sdk::{
     Promise,
     PromiseResult,
     ext_contract,
+    PanicOnDefault, 
 };
 
 const DEFAULT_NUM_OF_BIKES: usize = 5;
 const AMOUNT_REWARD_FOR_INSPECTIONS: u128 = 15;
-const FT_CONTRACT_ACCOUNT: &str = "sub.dev-1664367873698-91420483511088";
+const FT_CONTRACT_ACCOUNT: &str = "sub.dev-1660204085773-49134722844982";
 
 // enum of Bike
 #[derive(BorshDeserialize, BorshSerialize)]
@@ -31,27 +32,32 @@ trait FungibleToken {
  * Contract
  */
 #[near_bindgen]
-#[derive(BorshDeserialize, BorshSerialize)]
+#[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
 pub struct Contract {
     bikes: Vec<Bike>,
 }
 
-impl Default for Contract {
-    fn default() -> Self {
+#[near_bindgen]
+impl Contract {
+
+    /**
+     * initialization
+     */
+    #[init]
+    pub fn new(num_of_bikes: usize) -> Self {
+        log!("initialize Contract with {} bikes", num_of_bikes);
+
         Self {
             bikes: {
                 let mut bikes = Vec::new();
-                for _i in 0..DEFAULT_NUM_OF_BIKES {
+
+                for _i in 0..num_of_bikes {
                     bikes.push(Bike::Available);
                 }
                 bikes
             },
         }
     }
-}
-
-#[near_bindgen]
-impl Contract {
     
     /**
      * get num of bikes
@@ -209,8 +215,10 @@ mod tests {
         let mut context = get_context(accounts(1));
         // init
         testing_env!(context.build());
+
+        let init_num = 5;
         // create contract
-        let contract = Contract::default();
+        let contract = Contract::new(init_num);
 
         testing_env!(context.is_view(true).build());
         // check num of bikes
@@ -228,7 +236,7 @@ mod tests {
         // init 
         testing_env!(context.build());
         // create contract
-        let mut contract = Contract::default();
+        let mut contract = Contract::new(5);
 
         let test_index = contract.bikes.len() - 1;
         // change status
@@ -254,7 +262,8 @@ mod tests {
         // init
         testing_env!(context.build());
         // create contract
-        let mut contract = Contract::default();
+        let mut contract = Contract::new(5);
+
         // change status
         contract.inspect_bike(0);
 

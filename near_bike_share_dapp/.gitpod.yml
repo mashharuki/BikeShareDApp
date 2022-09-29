@@ -1,6 +1,6 @@
 tasks:
-  - init: yarn
-    command: yarn dev
+  - init: yarn install && mkdir out
+    command: yarn build
 ports:
   - port: 1234
     onOpen: open-browser
