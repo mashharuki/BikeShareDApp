@@ -4,16 +4,27 @@ use near_sdk::{
     env,
     log,
     AccountId,
+    Gas,
+    Promise,
+    PromiseResult,
+    ext_contract,
 };
 
 const DEFAULT_NUM_OF_BIKES: usize = 5;
+const AMOUNT_REWARD_FOR_INSPECTIONS: u128 = 15;
+const FT_CONTRACT_ACCOUNT: &str = "sub.dev-1664367873698-91420483511088";
 
 // enum of Bike
 #[derive(BorshDeserialize, BorshSerialize)]
 enum Bike {
     Available,             
     InUse(AccountId),      
-    Inspection(AccountId), 
+    Inspection(AccountId),
+}
+    
+#[ext_contract(ext_ft)]
+trait FungibleToken {
+    fn ft_transfer(&mut self, receiver_id: String, amount: String, memo: Option<String>); 
 }
 
 /**
@@ -123,8 +134,48 @@ impl Contract {
             }
             Bike::Inspection(inspector) => {
                 assert_eq!(inspector.clone(), user_id, "Fail due to wrong account");
-                self.bikes[index] = Bike::Available;
+                Self::return_inspected_bike(index);
             }
+        }
+    }
+
+    /**
+     * give a reward function
+     */
+    pub fn return_inspected_bike(index: usize) -> Promise {
+        let contract_id = FT_CONTRACT_ACCOUNT.parse().unwrap();
+        let amount = AMOUNT_REWARD_FOR_INSPECTIONS.to_string();
+        let receiver_id = env::predecessor_account_id().to_string();
+
+        log!(
+            "{} transfer to {}: {} FT",
+            env::current_account_id(),
+            &receiver_id,
+            &amount
+        );
+
+        ext_ft::ext(contract_id)
+            .with_attached_deposit(1)
+            .ft_transfer(receiver_id, amount, None)
+            .then(
+                // callback (自身のcallback_return_bike()メソッドを呼び出す)
+                Self::ext(env::current_account_id())
+                    .with_static_gas(Gas(3_000_000_000_000))
+                    .callback_return_bike(index),
+            )
+    }
+
+    /**
+     * callback function
+     */
+    pub fn callback_return_bike(&mut self, index: usize) {
+        assert_eq!(env::promise_results_count(), 1, "This is a callback method");
+
+        match env::promise_result(0) {
+            PromiseResult::NotReady => unreachable!(),
+            PromiseResult::Failed => panic!("Fail cross-contract call"),
+            // if success, change status
+            PromiseResult::Successful(_) => self.bikes[index] = Bike::Available,
         }
     }
 }
