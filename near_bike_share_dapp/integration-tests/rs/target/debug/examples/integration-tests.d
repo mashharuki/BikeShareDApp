@@ -1,0 +1,1 @@
+/Users/harukikondo/git/BikeShareDApp/near_bike_share_dapp/integration-tests/rs/target/debug/examples/integration-tests: /Users/harukikondo/git/BikeShareDApp/near_bike_share_dapp/integration-tests/rs/src/tests.rs
