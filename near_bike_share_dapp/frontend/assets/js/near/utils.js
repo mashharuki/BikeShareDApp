@@ -38,6 +38,23 @@ export async function initContract() {
         "return_bike"
       ],
     })
+
+    // Initializing Fungible token contract APIs by contract name and configuration
+    window.ftContract = await new Contract(
+      window.walletConnection.account(), 
+      nearConfig.ftContractName,
+      {
+        viewMethods: [
+          "ft_balance_of", 
+          "storage_balance_of"
+        ],
+        changeMethods: [
+          "storage_deposit", 
+          "storage_unregister", 
+          "ft_transfer"
+        ],
+      }
+    );
 }
 
 /**
@@ -120,5 +137,64 @@ export async function return_bike(index) {
   let response = await window.contract.return_bike({
     index: index,
   });
+  return response;
+}
+
+/**
+ * get fungible token amount function
+ */
+export async function ft_balance_of(accountId) {
+  let balance = await window.ftContract.ft_balance_of({
+    account_id:accountId,
+  });
+  return balance;
+}
+
+/**
+ * get storage balance of account id function
+ */
+export async function storage_balance_of(accountId) {
+  let balance = await window.ftContract.storage_balance_of({
+    account_id:accountId,
+  });
+  return balance;
+}
+
+/**
+ * register storage deposit function
+ */
+export async function storage_deposit() {
+  let response = await window.ftContract.storage_deposit(
+    {}, 
+    "300000000000000", // gas
+    "1250000000000000000000" // deposit amount (in yoctoNEAR, 1 yoctoNEAR = 10^-24 NEAR)
+  );
+  return response;
+}
+
+/**
+ * unregister storage deposit function
+ */
+export async function storage_unregister() {
+  let response = await window.ftContract.storage_unregister(
+    { force: true },
+    "300000000000000",
+    "1"
+  );
+  return response;
+}
+
+/**
+ * transfer fungible token function
+ */
+export async function ft_transfer(receiver_id, amount) {
+  let response = await window.ftContract.ft_transfer(
+    {
+      receiver_id: receiver_id,
+      amount: amount,
+    },
+    "300000000000000",
+    "1" // 1 yoctoNEAR
+  );
   return response;
 }

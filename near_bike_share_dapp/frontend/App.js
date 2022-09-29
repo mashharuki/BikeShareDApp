@@ -9,7 +9,12 @@ import {
   who_is_inspecting,
   use_bike,
   inspect_bike,
-  return_bike
+  return_bike,
+  ft_balance_of,
+  storage_balance_of,
+  storage_deposit,
+  storage_unregister,
+  ft_transfer,
 } from './assets/js/near/utils'
 const bikeImg = require("./assets/img/bike.png");
 
@@ -34,11 +39,24 @@ export default function App() {
 
   useEffect(() => {
     /**
+     * init bike use amount
+     */
+    const initAmountToUseBike = async () => {
+      setAmountToUseBike(30); 
+    };
+  
+    /**
      * init Rendering state function
      */
     const initRenderingState = async () => {
       if (!window.walletConnection.isSignedIn()) {
         setRenderingState(RenderingStates.SIGN_IN);
+      } else {
+        // check status
+        const is_registered = await isRegistered(window.accountId);
+        if (!is_registered) {
+          setRenderingState(RenderingStates.REGISTRATION);
+        }
       }
     }
 
@@ -61,6 +79,7 @@ export default function App() {
       console.log("Set bikes: ", new_bikes);
     };
 
+    initAmountToUseBike();
     initRenderingState();
     initAllBikeInfo();
   }, []);
@@ -179,6 +198,49 @@ export default function App() {
     console.log("Update bikes: ", allBikeInfo);
   };
 
+  /**
+   * check account id is registered
+   */
+  const isRegistered = async (accountId) => {
+    // get balance
+    const balance = await storage_balance_of(accountId);
+    console.log("user's storage balance: ", balance);
+  
+    // check a balance is null 
+    if (balance === null) {
+      console.log("account is not yet registered");
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  /**
+   * register storage deposit
+   */
+  const newUserRegister = async () => {
+    try {
+      await storage_deposit();
+    } catch (e) {
+      alert(e);
+    }
+  };
+
+  /**
+   * prepare balance info
+   */
+  const prepareBalanceInfo = async (accountId) => {
+    // get fungible token balance
+    const balance = await ft_balance_of(accountId);
+    // init
+    let balance_info = await initialBalanceInfo();
+    balance_info.account_id = accountId;
+    balance_info.balance = balance;
+  
+    setBalanceInfo(balance_info);
+    setShowBalance(true);
+  };
+
   console.log(
     "see:",
     `https://explorer.testnet.near.org/accounts/${window.accountId}`
@@ -212,6 +274,7 @@ export default function App() {
       <button 
         className="link" 
         style={{ float: "right" }}
+        onClick={storage_unregister}
       >
         Unregister
       </button>
@@ -249,7 +312,11 @@ export default function App() {
         </div>
         <main>
           <p style={{ textAlign: "center", marginTop: "2.5em" }}>
-            <button>storage deposit</button>
+            <button 
+              onClick={newUserRegister}
+            >
+              storage deposit 
+            </button>
           </p>
         </main>
       </div>
@@ -324,8 +391,17 @@ export default function App() {
   const checkBalance = () => {
     return (
       <div class="balance_content">
-        <button>check my balance</button>
-        <button style={{ marginTop: "0.1em" }}>check contract's balance</button>
+        <button
+          onClick={() => prepareBalanceInfo(window.accountId)}
+        >
+          check my balance
+        </button>
+        <button 
+          style={{ marginTop: "0.1em" }}
+          onClick={() => prepareBalanceInfo(window.contract.contractId)}  
+        >
+          check contract's balance
+        </button>
         <span>or</span>
         <form
           onSubmit={async (event) => {
@@ -333,7 +409,9 @@ export default function App() {
             const { fieldset, account } = event.target.elements;
             const account_to_check = account.value;
             fieldset.disabled = true;
+            
             try {
+              await prepareBalanceInfo(account_to_check);
             } catch (e) {
               alert(e);
             }
@@ -371,6 +449,7 @@ export default function App() {
             fieldset.disabled = true;
 
             try {
+              await ft_transfer(account_to_transfer, amountToUseBike.toString());
             } catch (e) {
               alert(e);
             }
