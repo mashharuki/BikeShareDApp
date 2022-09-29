@@ -1,5 +1,6 @@
 use near_sdk::{
     borsh::{self, BorshDeserialize, BorshSerialize},
+    json_types::{self, U128},
     near_bindgen,
     env,
     log,
@@ -9,11 +10,13 @@ use near_sdk::{
     PromiseResult,
     ext_contract,
     PanicOnDefault, 
+    PromiseOrValue
 };
 
 const DEFAULT_NUM_OF_BIKES: usize = 5;
 const AMOUNT_REWARD_FOR_INSPECTIONS: u128 = 15;
 const FT_CONTRACT_ACCOUNT: &str = "sub.dev-1660204085773-49134722844982";
+const AMOUNT_TO_USE_BIKE: u128 = 30; 
 
 // enum of Bike
 #[derive(BorshDeserialize, BorshSerialize)]
@@ -97,13 +100,45 @@ impl Contract {
     }
 
     /**
+     * get amount to use a bike function
+     */
+    pub fn amount_to_use_bike(&self) -> U128 {
+        json_types::U128::from(AMOUNT_TO_USE_BIKE)
+    }
+
+    /**
+     * fungible tokenの移転
+     */
+    pub fn ft_on_transfer(
+        &mut self,
+        sender_id: String,
+        amount: String,
+        msg: String,
+    ) -> PromiseOrValue<U128> {
+        assert_eq!(
+            amount,
+            AMOUNT_TO_USE_BIKE.to_string(),
+            "Require {} ft to use the bike",
+            AMOUNT_TO_USE_BIKE.to_string()
+        );
+
+        log!(
+            "in ft_on_transfer: sender:{}, amount:{}, msg:{}",
+            sender_id,
+            amount,
+            msg
+        );
+
+        // call use_bike function
+        self.use_bike(msg.parse().unwrap(), sender_id.try_into().unwrap());
+        PromiseOrValue::Value(U128::from(0))
+    }
+
+    /**
      * change status Available → Inuse 
      */
-    pub fn use_bike(&mut self, index: usize) {
-        // get accountid calling this method
-        let user_id = env::predecessor_account_id();
+    fn use_bike(&mut self, index: usize, user_id: AccountId) {
         log!("{} uses bike", &user_id);
-
         match &self.bikes[index] {
             Bike::Available => self.bikes[index] = Bike::InUse(user_id),
             _ => panic!("Bike is not available"),

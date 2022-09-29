@@ -7,7 +7,6 @@ import {
   is_available,
   who_is_using,
   who_is_inspecting,
-  use_bike,
   inspect_bike,
   return_bike,
   ft_balance_of,
@@ -15,6 +14,8 @@ import {
   storage_deposit,
   storage_unregister,
   ft_transfer,
+  amount_to_use_bike,
+  ft_transfer_call,
 } from './assets/js/near/utils'
 const bikeImg = require("./assets/img/bike.png");
 
@@ -38,11 +39,13 @@ export default function App() {
   const [amountToUseBike, setAmountToUseBike] = useState(0);
 
   useEffect(() => {
+
     /**
      * init bike use amount
      */
     const initAmountToUseBike = async () => {
-      setAmountToUseBike(30); 
+      const amount = await amount_to_use_bike();
+      setAmountToUseBike(BigInt(amount));
     };
   
     /**
@@ -133,19 +136,22 @@ export default function App() {
   /**
    * update Bike info (using)
    */
-  const useBikeThenUpdateInfo = async (index) => {
-    console.log("Use bike");
-    setRenderingState(RenderingStates.TRANSACTION);
+   const transferFtToUseBike = async (index) => {
+    console.log("Transfer ft to use bike");
 
-    try {
-      await use_bike(index);
-    } catch (e) {
-      alert(e);
+    // get user balance
+    const balance = await ft_balance_of(window.accountId);
+
+    if (balance < amountToUseBike) {
+      alert(amountToUseBike + "ft is required to use the bike");
+    } else {
+      try {
+        // call ft_transfer_call method
+        ft_transfer_call(index, amountToUseBike.toString());
+      } catch (e) {
+        alert(e);
+      }
     }
-    // update Bike info
-    await updateBikeInfo(index);
-
-    setRenderingState(RenderingStates.HOME);
   };
 
   /**
@@ -362,7 +368,7 @@ export default function App() {
               <div className="bike_index">: {index}</div>
               <button
                 disabled={!bike.available}
-                onClick={() => useBikeThenUpdateInfo(index)}
+                onClick={() => transferFtToUseBike(index)}
               >
                 use
               </button>
@@ -409,7 +415,7 @@ export default function App() {
             const { fieldset, account } = event.target.elements;
             const account_to_check = account.value;
             fieldset.disabled = true;
-            
+
             try {
               await prepareBalanceInfo(account_to_check);
             } catch (e) {
