@@ -13,7 +13,13 @@ const nearConfig = getConfig(process.env.NODE_ENV || 'development')
  */
 export async function initContract() {
   // Initialize connection to the NEAR testnet
-  const near = await connect(Object.assign({ deps: { keyStore: new keyStores.BrowserLocalStorageKeyStore() } }, nearConfig))
+  const near = await connect(
+    Object.assign(
+      { deps: { keyStore: new keyStores.BrowserLocalStorageKeyStore() } }, 
+      nearConfig
+    )
+  );
+
   // Initializing Wallet based Account. It can work with NEAR testnet wallet that
   // is hosted at https://wallet.testnet.near.org
   window.walletConnection = new WalletConnection(near)
@@ -136,7 +142,7 @@ export async function return_bike(index) {
  */
 export async function ft_balance_of(accountId) {
   let balance = await window.ftContract.ft_balance_of({
-    account_id:accountId,
+    account_id: accountId
   });
   return balance;
 }
@@ -146,7 +152,7 @@ export async function ft_balance_of(accountId) {
  */
 export async function storage_balance_of(accountId) {
   let balance = await window.ftContract.storage_balance_of({
-    account_id:accountId,
+    account_id: accountId
   });
   return balance;
 }

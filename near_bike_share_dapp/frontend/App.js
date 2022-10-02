@@ -55,6 +55,7 @@ export default function App() {
       if (!window.walletConnection.isSignedIn()) {
         setRenderingState(RenderingStates.SIGN_IN);
       } else {
+        console.log("window.accountId:", window.accountId);
         // check status
         const is_registered = await isRegistered(window.accountId);
         if (!is_registered) {
@@ -362,7 +363,7 @@ export default function App() {
               className="bike" 
               style={{ display: "flex" }}
             >
-              <div class="bike_img">
+              <div className="bike_img">
                 <img src={bikeImg} />
               </div>
               <div className="bike_index">: {index}</div>
