@@ -253,7 +253,7 @@ Passed ✅ test_transfer_call_to_use_bike
 #### account_idのストレージの使用状況を表すデータ構造を取得するコマンド
 `near view sub.dev-1660204085773-49134722844982 storage_balance_of '{"account_id": "'mashharuki.testnet'"}'`
 
-```cmd
+```zsh
 View call: sub.dev-1660204085773-49134722844982.storage_balance_of({"account_id": "mashharuki.testnet"})
 { total: '1250000000000000000000', available: '0' }
 ```
@@ -261,3 +261,5 @@ View call: sub.dev-1660204085773-49134722844982.storage_balance_of({"account_id"
 ### 参考文献
  1. [Near Workspaces](https://github.com/near/workspaces-rs)
  2. [Gitpod](https://gitpod.io/workspaces)
+ 3. [Near Docs](https://docs.near.org/api/rpc/contracts)
+ 4. [NEP-141 Fungible Token](https://nomicon.io/Standards/Tokens/FungibleToken/Core#reference-level-explanation)
