@@ -140,9 +140,9 @@ export async function return_bike(index) {
 /**
  * get fungible token amount function
  */
-export async function ft_balance_of(accountId) {
+export async function ft_balance_of(account_id) {
   let balance = await window.ftContract.ft_balance_of({
-    account_id: accountId
+    account_id: account_id
   });
   return balance;
 }
@@ -150,9 +150,9 @@ export async function ft_balance_of(accountId) {
 /**
  * get storage balance of account id function
  */
-export async function storage_balance_of(accountId) {
+export async function storage_balance_of(account_id) {
   let balance = await window.ftContract.storage_balance_of({
-    account_id: accountId
+    account_id: account_id
   });
   return balance;
 }

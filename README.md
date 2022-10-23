@@ -258,6 +258,18 @@ View call: sub.dev-1660204085773-49134722844982.storage_balance_of({"account_id"
 { total: '1250000000000000000000', available: '0' }
 ```
 
+#### トークンを発行する
+
+```zsh
+near call sub23.mashharuki2.testnet new '{"owner_id": "'mashharuki2.testnet'", "total_supply": "1000000000000000", "metadata": { "spec": "ft-1.0.0", "name": "My First Token", "symbol": "MYFT", "decimals": 8 }}' --accountId mashharuki2.testnet
+```
+
+### トークンのやり取りを行うために受け取り側のアドレスをFTコントラクトに登録する
+
+```zsh
+ near call sub23.mashharuki2.testnet storage_deposit '' --accountId nearlearning.testnet --amount 0.00125
+```
+
 ### 参考文献
  1. [Near Workspaces](https://github.com/near/workspaces-rs)
  2. [Gitpod](https://gitpod.io/workspaces)
