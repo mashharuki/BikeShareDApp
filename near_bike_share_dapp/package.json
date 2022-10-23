@@ -8,7 +8,7 @@
       "build:web": "parcel build frontend/index.html --public-url ./",
     "deploy": "npm run build:contract && near dev-deploy --initFunction 'new' --initArgs '{\"num_of_bikes\": 5}'",
     "reset": "rm -f ./neardev/dev-account.env ",
-    "init": "export $(cat ./neardev/dev-account.env | xargs) FT_CONTRACT=sub.dev-1660204085773-49134722844982 FT_OWNER=dev-1660204085773-49134722844982 && near call $FT_CONTRACT storage_deposit '' --accountId $CONTRACT_NAME --amount 0.0125 && near call $FT_CONTRACT ft_transfer '{\"receiver_id\": \"'$CONTRACT_NAME'\", \"amount\": \"100\"}' --accountId $FT_OWNER --amount 0.000000000000000000000001",
+    "init": "export $(cat ./neardev/dev-account.env | xargs) FT_CONTRACT=sub23.mashharuki2.testnet FT_OWNER=mashharuki2.testnet && near call $FT_CONTRACT storage_deposit '' --accountId $CONTRACT_NAME --amount 0.0125 && near call $FT_CONTRACT ft_transfer '{\"receiver_id\": \"'$CONTRACT_NAME'\", \"amount\": \"100\"}' --accountId $FT_OWNER --amount 0.000000000000000000000001",
     "start": "npm run reset && npm run deploy && npm run init && env-cmd -f ./neardev/dev-account.env parcel frontend/index.html --open",
     "dev": "nodemon --watch contract -e ts --exec \"npm run start\"",
     "test": "npm run build:contract && npm run test:unit && npm run test:integration",

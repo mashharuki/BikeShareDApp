@@ -267,7 +267,15 @@ near call sub23.mashharuki2.testnet new '{"owner_id": "'mashharuki2.testnet'", "
 ### トークンのやり取りを行うために受け取り側のアドレスをFTコントラクトに登録する
 
 ```zsh
- near call sub23.mashharuki2.testnet storage_deposit '' --accountId nearlearning.testnet --amount 0.00125
+ near call sub23.mashharuki2.testnet storage_deposit '' --accountId dev-1666503589999-87468235150551 --amount 0.00125
+```
+
+```zsh
+near call sub23.mashharuki2.testnet ft_transfer '{"receiver_id": "dev-1666503589999-87468235150551", "amount": "19"}' --accountId mashharuki2.testnet --amount 0.000000000000000000000001
+```
+
+```zsh
+near view sub23.mashharuki2.testnet ft_balance_of '{"account_id": "dev-1666503589999-87468235150551"}'
 ```
 
 ### 参考文献

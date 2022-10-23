@@ -1,6 +1,6 @@
 const CONTRACT_NAME = process.env.CONTRACT_NAME || 'dev-1666502225509-72453980017428'
 // fungible token contract name
-const FT_CONTRACT_NAME = "sub.dev-1660204085773-49134722844982";
+const FT_CONTRACT_NAME = "sub23.mashharuki2.testnet";
 
 function getConfig(env) {
   switch (env) {
