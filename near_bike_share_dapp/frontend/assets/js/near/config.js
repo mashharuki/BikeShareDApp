@@ -1,4 +1,4 @@
-const CONTRACT_NAME = process.env.CONTRACT_NAME || 'dev-1666502225509-72453980017428'
+const CONTRACT_NAME = process.env.CONTRACT_NAME || 'new-awesome-project'
 // fungible token contract name
 const FT_CONTRACT_NAME = "sub23.mashharuki2.testnet";
 
