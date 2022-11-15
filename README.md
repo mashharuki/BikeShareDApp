@@ -6,6 +6,9 @@ Near上で動作するDAppです。
 Google, Microsoft, Mozzila, Appleによって仕様が策定され開発が進められている。  
 C/C++やRust、Golang、TypeScriptなどからコンパイルが可能。
 
+### NEARが採用するストレージステーキングについて
+コントラクトのアカウントはブロックチェーン上で使用するすべてのストレージをカバーするのに十分な残高(NEAR)を持っていなければならない。ユーザーが増えるとそのストレージコストが増えていくがこれをユーザーに支払ってもらおうという考えがストレージステーキングである。
+
 ### 雛形生成コマンド
  `npx create-near-app@3.1.0 --frontend=react --contract=rust near_bike_share_dapp`
 
@@ -283,3 +286,4 @@ near view sub23.mashharuki2.testnet ft_balance_of '{"account_id": "dev-166650358
  2. [Gitpod](https://gitpod.io/workspaces)
  3. [Near Docs](https://docs.near.org/api/rpc/contracts)
  4. [NEP-141 Fungible Token](https://nomicon.io/Standards/Tokens/FungibleToken/Core#reference-level-explanation)
+ 5. [Storage Management](https://nomicon.io/Standards/StorageManagement)

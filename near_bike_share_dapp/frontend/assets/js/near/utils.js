@@ -43,25 +43,26 @@ export async function initContract() {
         "inspect_bike", 
         "return_bike"
       ],
-    })
+    }
+  )
 
-    // Initializing Fungible token contract APIs by contract name and configuration
-    window.ftContract = await new Contract(
-      window.walletConnection.account(), 
-      nearConfig.ftContractName,
-      {
-        viewMethods: [
-          "ft_balance_of", 
-          "storage_balance_of"
-        ],
-        changeMethods: [
-          "storage_deposit", 
-          "storage_unregister", 
-          "ft_transfer",
-          "ft_transfer_call"
-        ],
-      }
-    );
+  // Initializing Fungible token contract APIs by contract name and configuration
+  window.ftContract = await new Contract(
+    window.walletConnection.account(), 
+    nearConfig.ftContractName,
+    {
+      viewMethods: [
+        "ft_balance_of", 
+        "storage_balance_of"
+      ],
+      changeMethods: [
+        "storage_deposit", 
+        "storage_unregister", 
+        "ft_transfer",
+        "ft_transfer_call"
+      ],
+    }
+  );
 }
 
 /**
@@ -143,9 +144,7 @@ export async function return_bike(index) {
 export async function ft_balance_of(account_id) {
   console.log("window.ftContract:", window.ftContract)
   let balance = await window.ftContract.ft_balance_of({
-    variables: {
-      account_id: account_id,
-   }, 
+    account_id: account_id,
   });
   return balance;
 }
@@ -153,11 +152,11 @@ export async function ft_balance_of(account_id) {
 /**
  * get storage balance of account id function
  */
-export async function storage_balance_of(account_id) {  
+export async function storage_balance_of(account_id) { 
+  console.log("window.ftContract:", window.ftContract)
+
   let balance = await window.ftContract.storage_balance_of({
-    variables: {
-      account_id: account_id,
-   }, 
+    account_id: account_id,
   });
   return balance;
 }
